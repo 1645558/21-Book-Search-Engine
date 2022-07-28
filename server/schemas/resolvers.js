@@ -14,8 +14,8 @@ const resolvers = {
     },
 
     Mutation: {
-        addUser: async (parent, { username, email, password }) => {
-            const user = await User.create({ username, email, password });
+        addUser: async (parent, args) => {
+            const user = await User.create(args);
             const token = signToken(user);
             return { token, user };
         },
@@ -36,19 +36,16 @@ const resolvers = {
             return { token, user };
         },
 
-        saveBook: async () {
-            console.log(user);
-            try {
-                const updatedUser = await User.findOneAndUpdate(
-                    { _id: user._id },
-                    { $addToSet: { savedBooks: body } },
-                    { new: true, runValidators: true }
+        saveBook: async (parent, args, context) => {
+            if (context.user) {
+                const userData = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: {savedBooks: args.input }},
+                    {new: true }
                 );
-                return res.json(updatedUser);
-            } catch (err) {
-                console.log(err);
-                return res.status(400).json(err);
+                return userData;
             }
+            throw new AuthenticationError('You need to be logged in!');
         },
 
         async deleteBook({ user, params }, res) {
