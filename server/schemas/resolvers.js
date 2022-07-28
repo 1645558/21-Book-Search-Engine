@@ -1,15 +1,15 @@
+const { User, Book } = require('../models');
+
 const resolvers = {
     Query: {
-        async getSingleUser({ user = null, params }, res) {
-            const foundUser = await User.findOne({
-                $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
-            });
-
-            if (!foundUser) {
-                return res.status(400).json({ message: 'Cannot find a user with this id!' });
+        me: async (parent, args, context) => {
+            if (context.user) {
+                const userData = await User.findOne({ _id: context.user.id })
+                    .select('-__v -password')
+                    .populate('books')
+                return userData;
             }
-
-            res.json(foundUser);
+            throw new AuthenticationError('You need to be logged in!');
         },
     },
 
@@ -53,7 +53,7 @@ const resolvers = {
                 return res.status(400).json(err);
             }
         },
-        
+
         async deleteBook({ user, params }, res) {
             const updatedUser = await User.findOneAndUpdate(
                 { _id: user._id },
