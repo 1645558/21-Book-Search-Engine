@@ -40,24 +40,24 @@ const resolvers = {
             if (context.user) {
                 const userData = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: {savedBooks: args.input }},
-                    {new: true }
+                    { $addToSet: { savedBooks: args.input } },
+                    { new: true }
                 );
                 return userData;
             }
             throw new AuthenticationError('You need to be logged in!');
         },
 
-        async deleteBook({ user, params }, res) {
-            const updatedUser = await User.findOneAndUpdate(
-                { _id: user._id },
-                { $pull: { savedBooks: { bookId: params.bookId } } },
-                { new: true }
-            );
-            if (!updatedUser) {
-                return res.status(404).json({ message: "Couldn't find user with this id!" });
+        deleteBook: async (parent, args, context) => {
+            if (context.user) {
+                const userData = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId: args.bookId } } },
+                    { new: true }
+                );
+                return userData;
             }
-            return res.json(updatedUser);
+            throw new AuthenticationError('You need to be logged in!');
         },
     }
 };
