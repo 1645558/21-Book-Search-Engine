@@ -20,22 +20,23 @@ const resolvers = {
             return { token, user };
         },
 
-        async login({ body }, res) {
-            const user = await User.findOne({ $or: [{ username: body.username }, { email: body.email }] });
+        login: async (parent, { email, password }) => {
+            const user = await User.findOne({ email });
             if (!user) {
-                return res.status(400).json({ message: "Can't find this user" });
+                throw new AuthenticationError('No user found with this email address');
             }
 
-            const correctPw = await user.isCorrectPassword(body.password);
+            const correctPw = await User.isCorrectPassword(password);
 
             if (!correctPw) {
-                return res.status(400).json({ message: 'Wrong password!' });
+                throw new AuthenticationError('Incorrect credentials');
             }
+
             const token = signToken(user);
-            res.json({ token, user });
+            return { token, user };
         },
 
-        async saveBook({ user, body }, res) {
+        saveBook: async () {
             console.log(user);
             try {
                 const updatedUser = await User.findOneAndUpdate(
