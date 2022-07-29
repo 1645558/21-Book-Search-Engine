@@ -1,12 +1,17 @@
 import React from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+} from '@apollo/client';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import SearchBooks from './pages/SearchBooks';
 import SavedBooks from './pages/SavedBooks';
 import Navbar from './components/Navbar';
+// import { ApolloProvider } from '@apollo/react-hooks';
 import { ApolloProvider } from '@apollo/react-hooks';
-import ApolloClient from 'apollo-boost';
 
 const client = new ApolloClient({
+  cache: new InMemoryCache(),
   request: (operation) => {
     const token = localStorage.getItem('id_token');
 
