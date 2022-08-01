@@ -2,13 +2,13 @@ import React from 'react';
 import {
   ApolloClient,
   InMemoryCache,
+  ApolloProvider
 } from '@apollo/client';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import SearchBooks from './pages/SearchBooks';
 import SavedBooks from './pages/SavedBooks';
 import Navbar from './components/Navbar';
 // import { ApolloProvider } from '@apollo/react-hooks';
-import { ApolloProvider } from '@apollo/react-hooks';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),

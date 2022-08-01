@@ -1,4 +1,5 @@
 const { User, Book } = require('../models');
+const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
@@ -26,7 +27,7 @@ const resolvers = {
                 throw new AuthenticationError('No user found with this email address');
             }
 
-            const correctPw = await User.isCorrectPassword(password);
+            const correctPw = await user.isCorrectPassword(password);
 
             if (!correctPw) {
                 throw new AuthenticationError('Incorrect credentials');
@@ -36,11 +37,11 @@ const resolvers = {
             return { token, user };
         },
 
-        saveBook: async (parent, args, context) => {
+        saveBook: async (parent, { bookData }, context) => {
             if (context.user) {
-                const userData = await User.findOneAndUpdate(
+                const userData = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { savedBooks: args.input } },
+                    { $addToSet: { savedBooks: bookData } },
                     { new: true }
                 );
                 return userData;
