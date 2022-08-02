@@ -1,4 +1,4 @@
-const { User, Book } = require('../models');
+const { User } = require('../models');
 const { signToken } = require('../utils/auth');
 
 const resolvers = {
@@ -6,8 +6,8 @@ const resolvers = {
         me: async (parent, args, context) => {
             if (context.user) {
                 const userData = await User.findOne({ _id: context.user.id })
-                    .select('-__v -password')
-                    .populate('books')
+                    // .select('-__v -password')
+                    // .populate('books')
                 return userData;
             }
             throw new AuthenticationError('You need to be logged in!');
@@ -49,7 +49,7 @@ const resolvers = {
             throw new AuthenticationError('You need to be logged in!');
         },
 
-        deleteBook: async (parent, args, context) => {
+        removeBook: async (parent, args, context) => {
             if (context.user) {
                 const userData = await User.findOneAndUpdate(
                     { _id: context.user._id },

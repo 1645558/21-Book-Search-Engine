@@ -42,7 +42,7 @@ type Mutation {
     addUser(username: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
     saveBook(bookData: savedBook!): User
-    deleteBook(bookId: ID!): User
+    removeBook(bookId: ID!): User
 }
 `;
 
